@@ -1,0 +1,14 @@
+#container {
+  position: relative;
+    width: 800px;
+    height: 800px;
+}
+
+#container canvas {
+  position: absolute;
+  background-color: transparent;
+}
+
+.hide {
+  display: none;
+}

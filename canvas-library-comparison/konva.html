@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.3.1/konva.min.js"></script>
+</head>
+<body>
+<span>KonvaJS</span>
+<div id="container"></div>
+<script>
+  setTimeout(function() {
+    var stage = new Konva.Stage({
+      container: 'container',
+      width: 400,
+      height: 400
+    });
+    var layer = new Konva.Layer();
+    stage.add(layer);
+    var rect = new Konva.Rect({
+      x: 50,
+      y: 50,
+      width: 100,
+      height: 100,
+      fill: 'blue',
+      draggable: true,
+      dragBoundFunc: function(pos) {
+        var newX = Math.max(0, Math.min(stage.width() - rect.width(), pos.x));
+        var newY = Math.max(0, Math.min(stage.height() - rect.height(), pos.y));
+        return { x: newX, y: newY };
+      }
+    });
+    layer.add(rect);
+    layer.draw();
+  }, 2000);
+</script>
+</body>
+</html>

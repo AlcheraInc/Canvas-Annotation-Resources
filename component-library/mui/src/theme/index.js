@@ -1,7 +1,7 @@
 'use client'
 
 import { createTheme } from '@mui/material/styles';
-import {green} from "@mui/material/colors";
+import {green, red} from "@mui/material/colors";
 
 const customTheme =createTheme({
   // Color Custom
@@ -10,11 +10,21 @@ const customTheme =createTheme({
       main: green[900]
     }
   },
+  // Breakpoints
+  breakpoints: {
+    values: {
+      mobile: 0,
+      tablet: 640,
+      laptop: 1024,
+      desktop: 1200,
+    },
+  },
   // Typography Custom
     typography: {
       button: {
        '@media (min-width:600px)': {
-        fontSize: '20px'
+          fontSize: '50px',
+          color: red[300]
        }
       }
     }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Draw Polygon</title>
+    <script src="https://pixijs.download/v5.3.3/pixi.min.js"></script>
+</head>
+<body>
+<script>
+  // Create a Pixi application
+  const app = new PIXI.Application({
+    width: 800,
+    height: 600,
+    backgroundColor: 0xAAAAAA
+  });
+  document.body.appendChild(app.view);
+
+  // Create an array to store polygon points
+  const polygonPoints = [];
+
+  // Create a graphics object to draw the polygon
+  const graphics = new PIXI.Graphics();
+  app.stage.addChild(graphics);
+
+  // Handle mouse click event
+  function handleClick(event) {
+    const { clientX, clientY } = event;
+
+    // Add the clicked point to the polygon points array
+    polygonPoints.push(clientX, clientY);
+
+    // Clear the graphics object and redraw the polygon
+    graphics.clear();
+    graphics.lineStyle(2, 0xFF0000);
+    graphics.beginFill(0x00FF00, 0.5);
+    graphics.drawPolygon(polygonPoints);
+    graphics.endFill();
+  }
+
+  // Add event listener for mouse click
+  app.view.addEventListener('click', handleClick);
+</script>
+</body>
+</html>

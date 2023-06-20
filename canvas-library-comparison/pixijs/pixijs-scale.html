@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rectangle Resizing</title>
+    <script src="https://pixijs.download/v5.3.3/pixi.min.js"></script>
+</head>
+<body>
+<script>
+  // Create a Pixi application
+  const app = new PIXI.Application({
+    width: 800,
+    height: 600,
+    backgroundColor: 0xAAAAAA
+  });
+  document.body.appendChild(app.view);
+
+  // Create a rectangle
+  const rectangle = new PIXI.Graphics();
+  rectangle.beginFill(0xFF0000);
+  rectangle.drawRect(100, 100, 200, 100);
+  rectangle.endFill();
+  app.stage.addChild(rectangle);
+
+  // Variables to store mouse interaction state
+  let isResizing = false;
+  let startX = 0;
+  let startY = 0;
+  let startWidth = 0;
+  let startHeight = 0;
+
+  // Function to update rectangle size
+  function updateSize(width, height) {
+    rectangle.clear();
+    rectangle.beginFill(0xFF0000);
+    rectangle.drawRect(100, 100, width, height);
+    rectangle.endFill();
+  }
+
+  // Get the position of the canvas element on the page
+  function getCanvasPosition() {
+    const rect = app.view.getBoundingClientRect();
+    return {
+      x: rect.left,
+      y: rect.top
+    };
+  }
+
+  // Handle mouse down event
+  function handleMouseDown(event) {
+    const canvasPosition = getCanvasPosition();
+    const { clientX, clientY } = event;
+
+    const bounds = rectangle.getBounds();
+
+    // Check if the cursor is on any of the rectangle edges
+    if (
+      clientX >= bounds.x - 5 + canvasPosition.x && clientX <= bounds.x + 5 + canvasPosition.x &&
+      clientY >= bounds.y + canvasPosition.y && clientY <= bounds.y + bounds.height + canvasPosition.y
+    ) {
+      // Left edge resizing
+      app.view.style.cursor = 'ew-resize';
+      isResizing = true;
+      startX = clientX;
+      startWidth = bounds.width;
+    } else if (
+      clientX >= bounds.x + bounds.width - 5 + canvasPosition.x && clientX <= bounds.x + bounds.width + 5 + canvasPosition.x &&
+      clientY >= bounds.y + canvasPosition.y && clientY <= bounds.y + bounds.height + canvasPosition.y
+    ) {
+      // Right edge resizing
+      app.view.style.cursor = 'ew-resize';
+      isResizing = true;
+      startX = clientX;
+      startWidth = bounds.width;
+    } else if (
+      clientX >= bounds.x + canvasPosition.x && clientX <= bounds.x + bounds.width + canvasPosition.x &&
+      clientY >= bounds.y - 5 + canvasPosition.y && clientY <= bounds.y + 5 + canvasPosition.y
+    ) {
+      // Top edge resizing
+      app.view.style.cursor = 'ns-resize';
+      isResizing = true;
+      startY = clientY;
+      startHeight = bounds.height;
+    } else if (
+      clientX >= bounds.x + canvasPosition.x && clientX <= bounds.x + bounds.width + canvasPosition.x &&
+      clientY >= bounds.y + bounds.height - 5 + canvasPosition.y && clientY <= bounds.y + bounds.height + 5 + canvasPosition.y
+    ) {
+      // Bottom edge resizing
+      app.view.style.cursor = 'ns-resize';
+      isResizing = true;
+      startY = clientY;
+      startHeight = bounds.height;
+    } else {
+      // Default cursor, no resizing
+      app.view.style.cursor = 'default';
+      isResizing = false;
+    }
+  }
+
+  // Handle mouse move event
+  function handleMouseMove(event) {
+    if (!isResizing) return;
+
+    const canvasPosition = getCanvasPosition();
+    const { clientX, clientY } = event;
+
+    const deltaX = clientX - startX;
+    const deltaY = clientY - startY;
+
+    // Update width and height based on the mouse movement
+    let newWidth = startWidth + deltaX;
+    let newHeight = startHeight + deltaY;
+
+    // Prevent negative dimensions
+    newWidth = Math.max(newWidth, 0);
+    newHeight = Math.max(newHeight, 0);
+
+    // Update the rectangle size
+    updateSize(newWidth, newHeight);
+  }
+
+  // Handle mouse up event
+  function handleMouseUp() {
+    isResizing = false;
+    app.view.style.cursor = 'default';
+  }
+
+  // Add event listeners for mouse interactions
+  app.view.addEventListener('mousedown', handleMouseDown);
+  app.view.addEventListener('mousemove', handleMouseMove);
+  app.view.addEventListener('mouseup', handleMouseUp);
+</script>
+</body>
+</html>

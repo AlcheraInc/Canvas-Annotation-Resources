@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Draggable Rectangle</title>
+    <script src="https://pixijs.download/v5.3.3/pixi.min.js"></script>
+</head>
+<body>
+<script>
+  // Create a Pixi application
+  const app = new PIXI.Application({
+    width: 800,
+    height: 600,
+    backgroundColor: 0xAAAAAA
+  });
+  document.body.appendChild(app.view);
+
+  // Create a rectangle
+  const rectangle = new PIXI.Graphics();
+  rectangle.beginFill(0xFF0000);
+  rectangle.drawRect(100, 100, 200, 100);
+  rectangle.endFill();
+  app.stage.addChild(rectangle);
+
+  // Variables to store drag interaction state
+  let isDragging = false;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+
+  // Handle mouse down event
+  function handleMouseDown(event) {
+    const { clientX, clientY } = event;
+
+    // Check if the cursor is within the rectangle bounds
+    if (rectangle.containsPoint(new PIXI.Point(clientX, clientY))) {
+      isDragging = true;
+
+      // Calculate the offset between the cursor position and the rectangle's position
+      dragOffsetX = clientX - rectangle.x;
+      dragOffsetY = clientY - rectangle.y;
+    }
+  }
+
+  // Handle mouse move event
+  function handleMouseMove(event) {
+    if (isDragging) {
+      const { clientX, clientY } = event;
+
+      // Calculate the new position of the rectangle based on the cursor position and the drag offset
+      rectangle.x = clientX - dragOffsetX;
+      rectangle.y = clientY - dragOffsetY;
+    }
+  }
+
+  // Handle mouse up event
+  function handleMouseUp() {
+    isDragging = false;
+  }
+
+  // Add event listeners for mouse interactions
+  app.view.addEventListener('mousedown', handleMouseDown);
+  app.view.addEventListener('mousemove', handleMouseMove);
+  app.view.addEventListener('mouseup', handleMouseUp);
+</script>
+</body>
+</html>

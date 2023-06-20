@@ -7,34 +7,86 @@
 <span>PixiJS</span>
 <script>
   setTimeout(function() {
-    var app = new PIXI.Application({ width: 400, height: 400 });
+    let app = new PIXI.Application({ width: 800, height: 800 });
     document.body.appendChild(app.view);
-    var graphics = new PIXI.Graphics();
-    graphics.beginFill(0x0000FF);
-    graphics.drawRect(50, 50, 100, 100);
-    graphics.interactive = true;
-    graphics.buttonMode = true;
-    graphics.on('pointerdown', onDragStart)
-            .on('pointerup', onDragEnd)
-            .on('pointerupoutside', onDragEnd)
-            .on('pointermove', onDragMove);
-    app.stage.addChild(graphics);
-    function onDragStart(event) {
-      this.data = event.data;
-      this.alpha = 0.5;
-      this.dragging = true;
-      this.startPosition = event.data.getLocalPosition(this.parent);
-    }
-    function onDragEnd() {
-      this.alpha = 1;
-      this.dragging = false;
-      this.data = null;
-    }
-    function onDragMove() {
-      if (this.dragging) {
-        var newPosition = this.data.getLocalPosition(this.parent);
-        this.position.x += newPosition.x - this.startPosition.x;
-        this.position.y += newPosition.y - this.startPosition.y;
+
+    PIXI.Loader.shared.add('background', './pizza_ny').load(setup)
+
+    function setup() {
+      let backgroundTexture = PIXI.Texture.from('background');
+      let background = new PIXI.Sprite(backgroundTexture);
+      app.stage.addChild(background);
+
+      let graphics = new PIXI.Graphics();
+      let isDrawing = false;
+      let startPosition;
+
+      app.view.addEventListener('mousedown', onMouseDown);
+      app.view.addEventListener('mousemove', onMouseMove);
+      app.view.addEventListener('mouseup', onMouseUp);
+
+      graphics.beginFill(0x0000FF);
+      graphics.drawRect(150, 150, 100, 100);
+      graphics.interactive = true;
+      graphics.buttonMode = true;
+      graphics.on('pointerdown', onDragStart)
+              .on('pointerup', onDragEnd)
+              .on('pointerupoutside', onDragEnd)
+              .on('pointermove', onDragMove);
+      app.stage.addChild(graphics);
+
+      function onMouseDown(event) {
+        isDrawing = true;
+        startPosition = {
+          x: event.clientX,
+          y: event.clientY
+        }
+
+        graphics = new PIXI.Graphics();
+        graphics.lineStyle(2, 0x0000FF);
+        graphics.drawRect(startPosition.x, startPosition.y, 0, 0);
+
+        app.stage.addChild(graphics);
+      }
+
+      function onMouseMove(event) {
+        if (isDrawing) {
+          let currentPosition = {
+            x: event.clientX,
+            y: event.clientY
+          };
+          let width = currentPosition.x - startPosition.x;
+          let height = currentPosition.y - startPosition.y;
+
+          graphics.clear();
+          graphics.lineStyle(2, 0x0000FF);
+          graphics.drawRect(startPosition.x, startPosition.y, width, height);
+        }
+      }
+
+      function onMouseUp() {
+        isDrawing = false;
+        startPosition = null;
+        graphics = null;
+      }
+
+      function onDragStart(event) {
+        this.data = event.data;
+        this.dragging = true;
+        this.startPosition = event.data.getLocalPosition(this.parent);
+      }
+
+      function onDragEnd() {
+        this.dragging = false;
+        this.data = null;
+      }
+
+      function onDragMove() {
+        if (this.dragging) {
+          let newPosition = this.data.getLocalPosition(this.parent);
+          this.position.x = newPosition.x - this.startPosition.x;
+          this.position.y = newPosition.y - this.startPosition.y;
+        }
       }
     }
   }, 2000);

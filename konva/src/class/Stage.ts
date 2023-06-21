@@ -1,8 +1,9 @@
 import Konva from "konva";
-import Layer from '@class/Layer'
+import Layer from "konva/lib/Layer";
 
 export default class Stage {
     mainStage
+    backgroundImageLayer
     constructor(containerElement: HTMLDivElement, id: string) {
         const width = containerElement.clientWidth
         const height = containerElement.clientHeight
@@ -17,7 +18,7 @@ export default class Stage {
     }
 
     addLayerToStage(layerInstance: Layer) {
-        this.mainStage.add(layerInstance.layer)
+        this.mainStage.add(layerInstance)
     }
 
 }

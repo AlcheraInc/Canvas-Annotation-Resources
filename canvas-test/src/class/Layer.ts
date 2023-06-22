@@ -1,17 +1,24 @@
 import Konva from "konva";
 import { Group } from "konva/lib/Group";
+import { Line } from "konva/lib/shapes/Line";
 
 export default class Layer {
   layer;
   group: Group | null = null;
+  polyLine: Line | null = null;
 
-  constructor() {
-    this.layer = new Konva.Layer();
+  constructor(domElement: HTMLDivElement) {
+    const width = domElement.offsetWidth;
+    const height = domElement.offsetHeight;
+    console.log(width, height);
+    this.layer = new Konva.Layer({
+      listening: true,
+    });
     this.eventBinding();
   }
 
   eventBinding() {
-    this.layer.on("mouseover", function (event) {
+    this.layer.on("mousedown", function (event) {
       console.log("LayerMosueover");
     });
   }
@@ -56,6 +63,7 @@ export default class Layer {
       height: 50,
       fill: "red",
       draggable: true,
+      id: 'myRect'
     });
 
     const rectTransform = new Konva.Transformer({
@@ -66,5 +74,27 @@ export default class Layer {
     this.group?.add(rectBox);
     this.group?.add(rectTransform);
     this.group?.add(labelLeft);
+  }
+  addPolygonDot() {
+    if (this.polyLine === null) {
+      this.polyLine = new Konva.Line({
+        points: [23, 20, 23, 160, 70, 93, 150, 109, 290, 139, 270, 93],
+        fill: "#00D2FF",
+        stroke: "black",
+        strokeWidth: 5,
+        closed: true,
+        draggable: true,
+        bezier: true,
+      });
+      const polyTransform = new Konva.Transformer({
+        nodes: [this.polyLine],
+        centeredScaling: false,
+        rotateEnabled: false,
+      });
+      this.layer.add(polyTransform);
+      this.layer.add(this.polyLine);
+    } else {
+      this.polyLine.points(this.polyLine.points().concat([69, 80]));
+    }
   }
 }

@@ -3,14 +3,16 @@ import Stage from "@class/Stage";
 import Layer from "@class/Layer";
 import ImageLayer from "@class/ImageLayer";
 
-export default function Home() {
+export default function CanvasComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [stageInstance, setStageInstance] = useState<Stage>();
   const [layerInstance, setLayerInstance] = useState<Layer>();
   const addNewLayer = () => {
-    const rectLayer = new Layer();
-    setLayerInstance(rectLayer);
-    stageInstance?.addLayerToStage(rectLayer.layer);
+    if (containerRef.current) {
+      const rectLayer = new Layer(containerRef.current);
+      setLayerInstance(rectLayer);
+      stageInstance?.addLayerToStage(rectLayer.layer);
+    }
   };
   const addImageLayer = () => {
     const imageLayer = new ImageLayer();
@@ -23,6 +25,14 @@ export default function Home() {
 
   const addNewRectInGroup = () => {
     layerInstance?.addRectLabel();
+  };
+
+  const addDot = () => {
+    layerInstance?.addPolygonDot();
+  };
+
+  const findRect = () => {
+    stageInstance?.findRectById("#myRect");
   };
 
   useEffect(() => {
@@ -45,7 +55,9 @@ export default function Home() {
         그룹 추가하기
       </div>
       <div onClick={addNewRectInGroup}>상자 추가하기</div>
+      <div onClick={addDot}>폴리곤 점 추가</div>
       <div onClick={() => console.log(layerInstance)}>레이어 확인하기</div>
+      <div onClick={findRect}>상자 확인</div>
     </div>
   );
 }

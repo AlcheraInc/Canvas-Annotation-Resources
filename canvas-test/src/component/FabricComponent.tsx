@@ -24,6 +24,10 @@ export default function CanvasComponent() {
     }
   };
 
+  const checkCanvas = () => {
+    fabricCanvas?.convertJson();
+  };
+
   return (
     <>
       <div id="container" className="w-6/12 h-96">
@@ -33,6 +37,7 @@ export default function CanvasComponent() {
       <div onClick={addGroup}>그룹 만들기</div>
       <div onClick={unvisibleGroup}>그룹 가리기 만들기</div>
       <div onClick={addPolygon}>폴리곤 만들기</div>
+      <div onClick={checkCanvas}>JSON</div>
     </>
   );
 }

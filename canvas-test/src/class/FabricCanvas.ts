@@ -1,9 +1,11 @@
-import { fabric } from "fabric";
+import {fabric} from "fabric";
+import {Point} from "fabric/fabric-impl";
 
 export default class FabricCanvas {
   fabricCanvas: fabric.Canvas;
   group: fabric.Group | null = null;
   polygon: fabric.Polygon | null = null;
+
   constructor(canvasElement: HTMLCanvasElement) {
     this.fabricCanvas = new fabric.Canvas(canvasElement, {
       width: 500,
@@ -49,8 +51,8 @@ export default class FabricCanvas {
 
     this.fabricCanvas.add(this.group);
   }
+
   unvisibleGroup() {
-    console.log("zz");
     this.group?.set("visible", false);
     this.fabricCanvas.renderAll();
   }
@@ -107,7 +109,7 @@ export default class FabricCanvas {
       },
     ];
     this.polygon = new fabric.Polygon(points, {
-      fill: "#00000000",
+      fill: "#000",
       strokeWidth: 0,
       stroke: "green",
       selectable: true,
@@ -117,6 +119,7 @@ export default class FabricCanvas {
     console.log(this.polygon);
     this.fabricCanvas.add(this.polygon);
   }
+
   addPolygonPoint(x: number, y: number) {
     console.log(x, y);
     if (this.polygon && this.polygon.points?.length) {
@@ -131,5 +134,9 @@ export default class FabricCanvas {
       this.fabricCanvas.renderAll();
       this.fabricCanvas.setActiveObject(this.polygon);
     }
+  }
+
+  convertJson() {
+    console.log(this.fabricCanvas.toJSON());
   }
 }

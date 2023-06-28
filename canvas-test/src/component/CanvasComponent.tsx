@@ -43,21 +43,23 @@ export default function CanvasComponent() {
   }, []);
 
   return (
-    <div>
-      <div ref={containerRef} id="container" className="w-6/12 h-96"></div>
-      <div className="ml-3" onClick={addImageLayer}>
-        이미지 추가하기
+    <div className='flex flex-col items-center mt-6'>
+      <div ref={containerRef} id="container" className="w-6/12 h-96 border-red-700 border-2"></div>
+      <div className="flex flex-col ">
+        <button className="bg-slate-200 m-2.5 px-2 w-44 h-10" onClick={addImageLayer}>
+          이미지 추가하기
+        </button>
+        <button className="bg-slate-200 m-2.5 px-2 w-44 h-10" onClick={addNewLayer}>
+          레이어 추가하기
+        </button>
+        <button className="bg-slate-200 m-2.5 px-2 w-44 h-10" onClick={addNewRectInGroup}>
+          상자 추가하기
+        </button>
+        <button className="bg-slate-200 m-2.5 px-2 w-44 h-10" onClick={addDot}>폴리곤 점 추가</button>
+        <button className="bg-slate-200 m-2.5 px-2 w-44 h-10" onClick={() => console.log(layerInstance)}>레이어 확인하기</button>
+        <button className="bg-slate-200 m-2.5 px-2 w-44 h-10" onClick={findRect}>상자 확인</button>
       </div>
-      <div className="inline" onClick={addNewLayer}>
-        레이어 추가하기
-      </div>
-      <div className="text-8xl" onClick={addNewGroup}>
-        그룹 추가하기
-      </div>
-      <div onClick={addNewRectInGroup}>상자 추가하기</div>
-      <div onClick={addDot}>폴리곤 점 추가</div>
-      <div onClick={() => console.log(layerInstance)}>레이어 확인하기</div>
-      <div onClick={findRect}>상자 확인</div>
+
     </div>
   );
 }

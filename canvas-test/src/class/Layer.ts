@@ -29,17 +29,21 @@ export default class Layer {
   }
 
   addRectLabel() {
+    this.group = new Konva.Group({
+      draggable: true,
+    });
+    this.layer.add(this.group);
     // label with left pointer
     const labelLeft = new Konva.Label({
-      x: 250,
-      y: 40,
+      x: 16,
+      y: 171,
       opacity: 0.75,
     });
 
     labelLeft.add(
       new Konva.Tag({
         fill: "green",
-        pointerDirection: "left",
+        pointerDirection: "down",
         pointerWidth: 20,
         pointerHeight: 28,
         lineJoin: "round",
@@ -57,12 +61,11 @@ export default class Layer {
     );
 
     const rectBox = new Konva.Rect({
-      x: 150,
-      y: 40,
-      width: 100,
-      height: 50,
-      fill: "red",
-      draggable: true,
+      x: 16,
+      y: 171,
+      width: 300,
+      height: 158,
+      stroke: "red",
       id: 'myRect'
     });
 
@@ -70,6 +73,8 @@ export default class Layer {
       nodes: [rectBox],
       centeredScaling: false,
       rotateEnabled: false,
+      borderEnabled: false,
+      anchorSize: 3
     });
     this.group?.add(rectBox);
     this.group?.add(rectTransform);
@@ -84,7 +89,7 @@ export default class Layer {
         strokeWidth: 5,
         closed: true,
         draggable: true,
-        bezier: true,
+        bezier: false,
       });
       const polyTransform = new Konva.Transformer({
         nodes: [this.polyLine],

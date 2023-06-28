@@ -3,6 +3,14 @@
 
 This is a compilation of documentations, examples, and research resources that are relevant to the development of the image labeling tool project.
 
+## MUST READ
+
+Before reading any further, it is important that you familiarize yourself with the technical jargon and concepts associated with image annotation and computer vision.
+
+Not only is understanding these basic terminologies a prerequisite to developing on this project, but also needed to adhere to the set standard of terminologies to be shared among collaborators.
+
+[Terminologies Document](https://alcherainc.atlassian.net/wiki/spaces/AADF/pages/1865613347/Terminology+Document)
+
 ## Directory Structure
 
 ### canvas-library-comparison

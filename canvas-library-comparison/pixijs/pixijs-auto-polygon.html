@@ -21,7 +21,7 @@
   const graphics = new PIXI.Graphics();
 
   // Define the polygon properties
-  const polygonSize = 3000; // Number of points in the polygon
+  const polygonPointCount = 3000; // Number of points in the polygon
   const polygonRadius = 200; // Radius of the polygon
   const polygonColor = 0xFF0000; // Color of the polygon
 
@@ -38,7 +38,7 @@
     const startTime = performance.now();
 
     // Generate the polygon points
-    for (let i = 0; i < polygonSize; i++) {
+    for (let i = 0; i < polygonPointCount; i++) {
       const angle = Math.random() * Math.PI * 2;
       const radius = Math.random() * polygonRadius;
       const x = 300 + Math.cos(angle) * radius;

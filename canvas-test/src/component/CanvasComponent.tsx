@@ -4,6 +4,7 @@ import Layer from "@class/Layer";
 import ImageLayer from "@class/ImageLayer";
 
 export default function CanvasComponent() {
+  // @ts-ignore
   const containerRef = useRef<HTMLDivElement>(null);
   const [stageInstance, setStageInstance] = useState<Stage>();
   const [layerInstance, setLayerInstance] = useState<Layer>();

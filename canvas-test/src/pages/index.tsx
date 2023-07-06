@@ -11,9 +11,13 @@ const CanvasComponent = dynamic(() => import("@component/CanvasComponent"), {
 export default function Home() {
   return (
     <main className="h-96	w-full">
-             <Link href='/Polygon'>
+             <Link href='/PixiPolygon'>
                <button className='bg-slate-200 m-2.5 px-2'>3000만큼 별찍자</button>
              </Link>
+      <Link href='/PixiPolygon'>
+        <button className='bg-slate-200 m-2.5 px-2'>Pixi PixiPolygon</button>
+      </Link>
+
       <CanvasComponent />
       {/* <FabricComponent />*/}
     </main>

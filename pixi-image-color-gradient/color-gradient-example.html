@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Toggle Color Change with PixiJS</title>
+    <script src="https://pixijs.download/v5.3.3/pixi.min.js"></script>
+</head>
+<body>
+<button onclick="toggleColorChange()">Toggle Color Change</button>
+<script>
+  const app = new PIXI.Application({ width: 1400, height: 700 });
+  document.body.appendChild(app.view);
+
+  let colorChangeType = 0; // 0: Original, 1: Sepia, 2: Inverted Colors, 3: Histogram Localization
+
+  function computeHistogram(imageData) {
+    const histogram = Array(256).fill(0);
+
+    for (let i = 0; i < imageData.length; i += 4) {
+      const intensity = Math.floor((imageData[i] + imageData[i + 1] + imageData[i + 2]) / 3);
+      histogram[intensity]++;
+    }
+
+    return histogram;
+  }
+
+  function performHistogramLocalizationColored(imageData) {
+    console.log('preserve color');
+    const numPixels = imageData.length / 4;
+    const histogramR = Array(256).fill(0);
+    const histogramG = Array(256).fill(0);
+    const histogramB = Array(256).fill(0);
+    const cumulativeHistogramR = Array(256).fill(0);
+    const cumulativeHistogramG = Array(256).fill(0);
+    const cumulativeHistogramB = Array(256).fill(0);
+
+    for (let i = 0; i < imageData.length; i += 4) {
+      const r = imageData[i];
+      const g = imageData[i + 1];
+      const b = imageData[i + 2];
+
+      histogramR[r]++;
+      histogramG[g]++;
+      histogramB[b]++;
+    }
+
+    cumulativeHistogramR[0] = histogramR[0];
+    cumulativeHistogramG[0] = histogramG[0];
+    cumulativeHistogramB[0] = histogramB[0];
+
+    for (let i = 1; i < 256; i++) {
+      cumulativeHistogramR[i] = cumulativeHistogramR[i - 1] + histogramR[i];
+      cumulativeHistogramG[i] = cumulativeHistogramG[i - 1] + histogramG[i];
+      cumulativeHistogramB[i] = cumulativeHistogramB[i - 1] + histogramB[i];
+    }
+
+    const normalizedHistogramR = cumulativeHistogramR.map((value) => (value * 255) / numPixels);
+    const normalizedHistogramG = cumulativeHistogramG.map((value) => (value * 255) / numPixels);
+    const normalizedHistogramB = cumulativeHistogramB.map((value) => (value * 255) / numPixels);
+
+    const modifiedImageData = new Uint8ClampedArray(imageData);
+
+    for (let i = 0; i < modifiedImageData.length; i += 4) {
+      const r = modifiedImageData[i];
+      const g = modifiedImageData[i + 1];
+      const b = modifiedImageData[i + 2];
+
+      const normalizedIntensityR = normalizedHistogramR[r];
+      const normalizedIntensityG = normalizedHistogramG[g];
+      const normalizedIntensityB = normalizedHistogramB[b];
+
+      modifiedImageData[i] = normalizedIntensityR; // Red channel
+      modifiedImageData[i + 1] = normalizedIntensityG; // Green channel
+      modifiedImageData[i + 2] = normalizedIntensityB; // Blue channel
+    }
+
+    return modifiedImageData;
+  }
+
+
+  function performHistogramLocalizationGrayscale(imageData) {
+    const histogram = computeHistogram(imageData);
+    const cumulativeHistogram = Array(256).fill(0);
+    cumulativeHistogram[0] = histogram[0];
+
+    for (let i = 1; i < 256; i++) {
+      cumulativeHistogram[i] = cumulativeHistogram[i - 1] + histogram[i];
+    }
+
+    const numPixels = imageData.length / 4;
+    const normalizedHistogram = cumulativeHistogram.map((value) => (value * 255) / numPixels);
+
+    const modifiedImageData = new Uint8ClampedArray(imageData);
+
+    for (let i = 0; i < modifiedImageData.length; i += 4) {
+      const intensity = Math.floor((modifiedImageData[i] + modifiedImageData[i + 1] + modifiedImageData[i + 2]) / 3);
+      const normalizedIntensity = normalizedHistogram[intensity];
+      modifiedImageData[i] = normalizedIntensity;
+      modifiedImageData[i + 1] = normalizedIntensity;
+      modifiedImageData[i + 2] = normalizedIntensity;
+    }
+
+    return modifiedImageData;
+  }
+
+  function applyColorChange(sprite) {
+    let filter;
+    let canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = sprite.width;
+    canvas.height = sprite.height;
+    ctx.drawImage(sprite.texture.baseTexture.source, 0, 0, sprite.width, sprite.height);
+    const imageData = ctx.getImageData(0, 0, sprite.width, sprite.height).data;
+    const texture = PIXI.Texture.from(canvas);
+
+    switch (colorChangeType) {
+      case 1: // contrast
+        filter = new PIXI.filters.ColorMatrixFilter();
+        filter.contrast(1);
+        break;
+      case 2: // Sepia
+        filter = new PIXI.filters.ColorMatrixFilter();
+        filter.sepia(1);
+        break;
+      case 3: // Inverted Colors
+        filter = new PIXI.filters.ColorMatrixFilter();
+        filter.negative();
+        break;
+      case 4: // Histogram Localization grayscale
+        // const modifiedImageDataGrayscale = performHistogramLocalizationGrayscale(imageData);
+        // ctx.putImageData(new ImageData(modifiedImageDataGrayscale, sprite.width, sprite.height), 0, 0);
+        // sprite.texture = texture;
+        break;
+      case 5: // Histogram Localization preserve color
+        const modifiedImageDataColored = performHistogramLocalizationColored(imageData);
+        ctx.putImageData(new ImageData(modifiedImageDataColored, sprite.width, sprite.height), 0, 0);
+        sprite.texture = texture;
+        break;
+      default: // Original
+        sprite.filters = [];
+        break;
+    }
+
+    sprite.filters = filter ? [filter] : [];
+  }
+
+  // Load the image
+  PIXI.loader.add('image', 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2020/10/Final-Fantasy-16-art.jpg').load(onAssetsLoaded);
+
+  function onAssetsLoaded() {
+    const imageTexture = PIXI.loader.resources['image'].texture;
+    const imageSprite = new PIXI.Sprite(imageTexture);
+    app.stage.addChild(imageSprite);
+
+    applyColorChange(imageSprite);
+  }
+
+  function toggleColorChange() {
+    colorChangeType = (colorChangeType + 1) % 6;
+    applyColorChange(app.stage.children[0]); // Apply the selected color change to the image
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    app.renderer.render(app.stage);
+  }
+
+  animate();
+</script>
+</body>
+</html>
